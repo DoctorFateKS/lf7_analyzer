@@ -1,0 +1,5 @@
+# frozen_string_literal: true
+#!/usr/bin/env ruby
+require_relative '../lib/lf7_analyzer'
+
+LF7Analyzer::Application.new.run
