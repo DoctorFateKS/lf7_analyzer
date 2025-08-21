@@ -2,5 +2,6 @@
 
 source "https://rubygems.org"
 
+ruby "3.2.3"
 gem "rspec"
-gem "csv"
+gem "rubocop", require: false
