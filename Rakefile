@@ -1,6 +1,8 @@
-require "rake"
+# frozen_string_literal: true
 
-desc "Lancer les tests"
+require 'rake'
+
+desc 'Lancer les tests'
 task :test do
-  sh "rspec"
+  sh 'rspec'
 end

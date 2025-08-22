@@ -4,8 +4,8 @@
 module LF7Analyzer
   # Application is the main entry point for running analysis tasks.
   class Application
-    def run
-      puts 'Hello, this is the LF7 Analyzer'
+    def open_csv(path)
+      CSV.open(path, 'r')
     end
   end
 end
