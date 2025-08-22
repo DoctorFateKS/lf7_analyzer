@@ -5,7 +5,7 @@ module LF7Analyzer
   # Application is the main entry point for running analysis tasks.
   class Application
     def run
-      puts 'Hello, this is the LF7 Analyzer'
+
     end
   end
 end
