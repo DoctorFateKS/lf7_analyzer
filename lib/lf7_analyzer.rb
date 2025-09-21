@@ -1,11 +1,17 @@
-# frozen_string_literal: true
+# Pronosoft statistics for the Lotofoot7 stocked in a hash
+# Statistics available here: https://www.pronosoft.com/fr/lotofoot/combinaisons/loto-foot-7/
 
-# The LF7Analyzer module provides tools for analyzing LF7 logs.
-module LF7Analyzer
-  # Application is the main entry point for running analysis tasks.
-  class Application
-    def open_csv(path)
-      CSV.open(path, 'r')
-    end
-  end
-end
+statistics = {
+  number_1 = { 0 => 83, 1 => 407, 2 => 985, 3 => 1357, 4 => 1134, 5 => 611, 6 => 160, 7 => 23 },
+  number_N = { 0 => 575, 1 => 1483, 2 => 1485, 3 => 828, 4 => 310, 5 => 72, 6 => 7, 7 => 0 },
+  number_2 = { 0 => 467, 1 => 1248, 2 => 1510, 3 => 969, 4 => 443, 5 => 107, 6 => 13, 7 => 3 },
+  consecutive_1 = { 0 => 83, 1 => 1536, 2 => 1761, 3 => 849, 4 => 342, 5 => 119, 6 => 47, 7 => 23 },
+  consecutive_N = { 0 => 575, 1 => 2800, 2 => 1043, 3 => 258, 4 => 68, 5 => 15, 6 => 1, 7 => 0 },
+  consecutive_2 = { 0 => 467, 1 => 2603, 2 => 1223, 3 => 359, 4 => 87, 5 => 14, 6 => 4, 7 => 3 },
+  altern = { 0 => 26, 1 => 114, 2 => 498, 3 => 1146, 4 => 1518, 5 => 1098, 6 => 360 },
+  diag = { 0 => 3353, 1 => 1272, 2 => 133, 3 => 2 },
+  sym = { 0 => 1287, 1 => 2079, 2 => 1168, 3 => 226 },
+  duo = { 1 => 26, 2 => 64, 3 => 708, 4 => 1491, 5 => 1893, 6 => 578 },
+  trio = { 1 => 26, 2 => 64, 3 => 279, 4 => 1118, 5 => 3273 },
+  quarters = { 1 => 26, 2 => 64, 3 => 279, 4 => 4391 }
+}
