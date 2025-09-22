@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'lf7_analyzer'
+require_relative '../lib/lf7'
 
 RSpec.describe LF7 do
   it 'returns the correct score for a random grid (array)' do
