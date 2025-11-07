@@ -20,7 +20,11 @@ def structure_totaux_initiale
 
     "paires"  => Hash[(1..6).map { |n| [n.to_s, 0] }],
     "tierces" => Hash[(1..5).map { |n| [n.to_s, 0] }],
-    "quarts"  => Hash[(1..4).map { |n| [n.to_s, 0] }]
+    "quarts"  => Hash[(1..4).map { |n| [n.to_s, 0] }],
+
+    "mise_totale" => 0,
+    "gain_total" => 0,
+    "profit_total" => 0
   }
 end
 
@@ -131,42 +135,59 @@ def afficher_menu
   puts "\n===== LOTOFOOT 7 ====="
   puts '1. Afficher la grille du jour'
   puts '2. Ajouter une nouvelle grille terminée'
-  puts '3. Quitter'
+  puts '3. Afficher les statistiques cumulés'
+  puts '4. Quitter'
   print 'Votre choix: '
 end
 
 def ajouter_grille(historique)
-  print "\nEntrez la date de la grille (format libre, ex: 2025-01-12) : "
+  print "\nEntrez la date de la grille (ex: 2025-01-12) : "
   date = gets.chomp
 
   print "Entrez la grille (ex: 1-2-1-N-1-2-2) : "
   saisie = gets.chomp
 
+  print "Montant misé sur cette grille (€) : "
+  mise = gets.chomp.to_f
+
+  print "Montant gagné sur cette grille (€) : "
+  gain = gets.chomp.to_f
+
+  profit = gain - mise
+
   grille = normaliser_grille(saisie)
   stats = calculer_stats(grille)
 
-  # Ajouter la grille dans l'historique
+  # Ajout de la grille complète dans l'historique
   historique["grilles"] << {
     "date" => date,
     "grille" => grille,
-    "stats" => stats
+    "stats" => stats,
+    "mise" => mise,
+    "gain" => gain,
+    "profit" => profit
   }
 
-  # Mise à jour des histogrammes
+  # Mise à jour des histogrammes statistiques
   stats.each do |cle, valeur|
     valeur_str = valeur.to_s
-
-    if historique["totaux"][cle].key?(valeur_str)
-      historique["totaux"][cle][valeur_str] += 1
-    else
-      historique["totaux"][cle][valeur_str] = 1
-    end
+    historique["totaux"][cle][valeur_str] ||= 0
+    historique["totaux"][cle][valeur_str] += 1
   end
+
+  # Mise à jour des totaux financiers
+  historique["totaux"]["mise_totale"]  ||= 0
+  historique["totaux"]["gain_total"]   ||= 0
+  historique["totaux"]["profit_total"] ||= 0
+
+  historique["totaux"]["mise_totale"]  += mise
+  historique["totaux"]["gain_total"]   += gain
+  historique["totaux"]["profit_total"] += profit
 
   sauvegarder_historique(historique)
 
   puts "\n✅ Grille enregistrée avec succès."
-  puts "Stats ajoutées : #{stats}"
+  puts "Profit net : #{profit} €"
 end
 
 def generer_toutes_les_grilles
@@ -215,6 +236,33 @@ def meilleures_grilles_du_jour(historique)
   { "score" => max_score, "grilles" => meilleures }
 end
 
+def afficher_totaux(historique)
+  puts "\n===== STATISTIQUES HISTORIQUES =====\n\n"
+
+  # Parcours des statistiques (hash de valeurs)
+  historique["totaux"].each do |critere, histo|
+    next if ["mise_totale", "gain_total", "profit_total"].include?(critere)  # ignorer les chiffres
+
+    puts "#{critere}:"
+    histo.each do |val, nb|
+      puts "  valeur #{val}: #{nb} fois"
+    end
+    puts ""
+  end
+
+  # Affichage finances
+  puts "===== FINANCES ====="
+  puts "Mises totales : #{historique["totaux"]["mise_totale"]} €"
+  puts "Gains totaux : #{historique["totaux"]["gain_total"]} €"
+  profit = historique["totaux"]["profit_total"]
+  puts "Profit total : #{profit} €"
+
+  if historique["totaux"]["mise_totale"] > 0
+    roi = (profit / historique["totaux"]["mise_totale"]) * 100
+    puts "ROI : #{roi.round(2)} %"
+  end
+end
+
 def boucle_principale(_historique)
   loop do
     afficher_menu
@@ -230,16 +278,18 @@ def boucle_principale(_historique)
       puts "\n✅ Score maximal : #{score}"
       puts "✅ Nombre de grilles optimales : #{grilles.size}"
 
-      grilles.first(10).each_with_index do |g, i|
+      grilles.first(30).each_with_index do |g, i|
         puts "\nOption #{i+1}: #{g["grille"].join("-")}"
       end
 
-      if grilles.size > 10
-        puts "\n...et #{grilles.size - 10} autres grilles"
+      if grilles.size > 30
+        puts "\n...et #{grilles.size - 30} autres grilles"
       end
     when "2"
       ajouter_grille(_historique)
-    when '3'
+    when "3"
+      afficher_totaux(_historique)
+    when '4'
       puts "\nAu revoir."
       break
     else
