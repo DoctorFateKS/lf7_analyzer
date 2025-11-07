@@ -24,6 +24,34 @@ def sauvegarder_historique(historique)
 end
 
 # Programme principal
+def afficher_menu
+  puts "\n===== LOTOFOOT 7 ====="
+  puts '1. Afficher la grille du jour'
+  puts '2. Ajouter une nouvelle grille terminée'
+  puts '3. Quitter'
+  print 'Votre choix: '
+end
+
+def boucle_principale(_historique)
+  loop do
+    afficher_menu
+    choix = gets.chomp
+
+    case choix
+    when '1'
+      puts "\n[INFO] Fonction pas encore implémentée. La grille du jour sera affichée ici."
+    when '2'
+      puts "\n[INFO] Fonction pas encore implémentée. L'ajout de grille sera ici."
+    when '3'
+      puts "\nAu revoir."
+      break
+    else
+      puts "\nChoix invalide."
+    end
+  end
+end
+
+# Programme principal
 historique = charger_historique
 puts 'Historique chargé avec succès.'
-puts "Il contient #{historique['grilles'].size} grille(s)."
+boucle_principale(historique)
