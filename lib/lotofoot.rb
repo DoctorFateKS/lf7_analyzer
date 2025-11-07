@@ -4,14 +4,32 @@ require 'json'
 
 HISTORIQUE_PATH = 'historique.json'
 
+def structure_totaux_initiale
+  {
+    "nombre_1" => Hash[(0..7).map { |n| [n.to_s, 0] }],
+    "nombre_N" => Hash[(0..7).map { |n| [n.to_s, 0] }],
+    "nombre_2" => Hash[(0..7).map { |n| [n.to_s, 0] }],
+
+    "cons_1" => Hash[(0..7).map { |n| [n.to_s, 0] }],
+    "cons_N" => Hash[(0..7).map { |n| [n.to_s, 0] }],
+    "cons_2" => Hash[(0..7).map { |n| [n.to_s, 0] }],
+
+    "diagonales" => Hash[(0..5).map { |n| [n.to_s, 0] }],
+    "symetries" => Hash[(0..3).map { |n| [n.to_s, 0] }],
+    "alternances" => Hash[(0..6).map { |n| [n.to_s, 0] }],
+
+    "paires"  => Hash[(1..6).map { |n| [n.to_s, 0] }],
+    "tierces" => Hash[(1..5).map { |n| [n.to_s, 0] }],
+    "quarts"  => Hash[(1..4).map { |n| [n.to_s, 0] }]
+  }
+end
+
 def charger_historique
   unless File.exist?(HISTORIQUE_PATH)
-    historique_initial = { 'grilles' => [], 'totaux' => { 'nombre_1' => 0, 'nombre_N' => 0,
-                                                          'nombre_2' => 0, 'cons_1' => 0,
-                                                          'cons_N' => 0, 'cons_2' => 0,
-                                                          'diagonales' => 0, 'symetries' => 0,
-                                                          'alternances' => 0, 'paires' => 0,
-                                                          'tierces' => 0, 'quarts' => 0 } }
+    historique_initial = {
+      "grilles" => [],
+      "totaux" => structure_totaux_initiale
+    }
 
     File.write(HISTORIQUE_PATH, JSON.pretty_generate(historique_initial))
   end
@@ -117,6 +135,40 @@ def afficher_menu
   print 'Votre choix: '
 end
 
+def ajouter_grille(historique)
+  print "\nEntrez la date de la grille (format libre, ex: 2025-01-12) : "
+  date = gets.chomp
+
+  print "Entrez la grille (ex: 1-2-1-N-1-2-2) : "
+  saisie = gets.chomp
+
+  grille = normaliser_grille(saisie)
+  stats = calculer_stats(grille)
+
+  # Ajouter la grille dans l'historique
+  historique["grilles"] << {
+    "date" => date,
+    "grille" => grille,
+    "stats" => stats
+  }
+
+  # Mise à jour des histogrammes
+  stats.each do |cle, valeur|
+    valeur_str = valeur.to_s
+
+    if historique["totaux"][cle].key?(valeur_str)
+      historique["totaux"][cle][valeur_str] += 1
+    else
+      historique["totaux"][cle][valeur_str] = 1
+    end
+  end
+
+  sauvegarder_historique(historique)
+
+  puts "\n✅ Grille enregistrée avec succès."
+  puts "Stats ajoutées : #{stats}"
+end
+
 def boucle_principale(_historique)
   loop do
     afficher_menu
@@ -126,12 +178,7 @@ def boucle_principale(_historique)
     when '1'
       puts "\n[INFO] Fonction pas encore implémentée. La grille du jour sera affichée ici."
     when "2"
-      print "\nEntrez la grille (ex: 1-2-1-N-1-2-2): "
-      saisie = gets.chomp
-      g = normaliser_grille(saisie)
-      stats = calculer_stats(g)
-      puts "\nStatistiques calculées:"
-      puts stats
+      ajouter_grille(_historique)
     when '3'
       puts "\nAu revoir."
       break
