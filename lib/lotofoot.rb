@@ -184,6 +184,36 @@ def generer_grilles_avec_stats
   end
 end
 
+def score_grille(stats, totaux)
+  score = 0
+
+  stats.each do |cle, valeur|
+    valeur_str = valeur.to_s
+    histogramme = totaux[cle]
+
+    if histogramme && histogramme[valeur_str]
+      score += histogramme[valeur_str]
+    end
+  end
+
+  score
+end
+
+def meilleures_grilles_du_jour(historique)
+  totaux = historique["totaux"]
+  grilles = generer_grilles_avec_stats
+
+  scores = grilles.map do |g|
+    s = score_grille(g["stats"], totaux)
+    { "grille" => g["grille"], "stats" => g["stats"], "score" => s }
+  end
+
+  max_score = scores.map { |g| g["score"] }.max
+
+  meilleures = scores.select { |g| g["score"] == max_score }
+
+  { "score" => max_score, "grilles" => meilleures }
+end
 
 def boucle_principale(_historique)
   loop do
@@ -191,11 +221,22 @@ def boucle_principale(_historique)
     choix = gets.chomp
 
     case choix
-    when '1'
-      puts "\nGénération des 2187 grilles..."
-      grilles = generer_grilles_avec_stats
-      puts "✅ #{grilles.size} grilles générées avec statistiques."
-      puts "Exemple grille : #{grilles.sample}"
+    when "1"
+      puts "\nCalcul de la grille du jour..."
+      resultat = meilleures_grilles_du_jour(_historique)
+      score = resultat["score"]
+      grilles = resultat["grilles"]
+
+      puts "\n✅ Score maximal : #{score}"
+      puts "✅ Nombre de grilles optimales : #{grilles.size}"
+
+      grilles.first(10).each_with_index do |g, i|
+        puts "\nOption #{i+1}: #{g["grille"].join("-")}"
+      end
+
+      if grilles.size > 10
+        puts "\n...et #{grilles.size - 10} autres grilles"
+      end
     when "2"
       ajouter_grille(_historique)
     when '3'
