@@ -169,6 +169,22 @@ def ajouter_grille(historique)
   puts "Stats ajoutées : #{stats}"
 end
 
+def generer_toutes_les_grilles
+  signes = ["1", "N", "2"]
+  combinaisons = signes.repeated_permutation(7).to_a
+  combinaisons
+end
+
+def generer_grilles_avec_stats
+  generer_toutes_les_grilles.map do |grille|
+    {
+      "grille" => grille,
+      "stats" => calculer_stats(grille)
+    }
+  end
+end
+
+
 def boucle_principale(_historique)
   loop do
     afficher_menu
@@ -176,7 +192,10 @@ def boucle_principale(_historique)
 
     case choix
     when '1'
-      puts "\n[INFO] Fonction pas encore implémentée. La grille du jour sera affichée ici."
+      puts "\nGénération des 2187 grilles..."
+      grilles = generer_grilles_avec_stats
+      puts "✅ #{grilles.size} grilles générées avec statistiques."
+      puts "Exemple grille : #{grilles.sample}"
     when "2"
       ajouter_grille(_historique)
     when '3'
