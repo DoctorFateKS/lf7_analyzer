@@ -1,1 +1,1 @@
-# Lotofoot 7 Analyzer
+# LF 7 Analyzer
